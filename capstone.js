@@ -12,6 +12,7 @@ var enemies =[]
 var powerups = []
 
 var missiles = []
+
 var gameOver = false
 
 function drawPlayer(){
@@ -23,33 +24,42 @@ function drawEverything() {
     drawPlayer()
     drawEnemies()
     drawMissle()
+    drawPowerUp()
     checkCollisionsPlayer()
     checkCollisionsMissiles()
+    fireMIssile()
     if(gameOver == false){
        requestAnimationFrame(drawEverything)
     }
 }
 
 function makeEnemies() {
-    var enemy = makeImage("images/destroyah.gif", 850, random(10,200), 100, 100, 1)
+    var enemy = makeImage("images/destroyah.gif", 1000, random(50,200), 100, 100, 1)
     enemies.push(enemy)
     setTimeout(makeEnemies, 1000)
 }
 
 function drawEnemies() {
+    var oldscore = score
+    
     for(var i = 0; i < enemies.length; i++){
         if(getX(enemies[i]) > -100) {
-        move(enemies[i], -3, 0)
+            move(enemies[i], -3, 0)
+            
+           if(oldscore = oldscore*2){
+                move(enemies[i], -score*2, 0)
+                 }
         }
         else {
          setX(enemies[i], 850)
          setY(enemies[i], random(0, 500))
         }
     }
-} 
+  
+}
 
 function fireMIssile(e) {
-    if(e.keyCode == 68){
+    if(keyState[32]){
     var beamx = getX(player) + 150 - 5
     var beamy = getY(player) + 150/2
     var beam = makeRect(beamx, beamy, 50, 5, "lime", 1)
@@ -57,24 +67,60 @@ function fireMIssile(e) {
     }
 }
 
-document.addEventListener("keydown", fireMIssile)
+var keyState = {};    
+window.addEventListener('keydown',function(e){
+    keyState[e.keyCode || e.which] = true;
+},true);    
+window.addEventListener('keyup',function(e){
+    keyState[e.keyCode || e.which] = false;
+},true);
 
 
 function drawMissle() {
     for(var i = 0; i < missiles.length; i++) {
         move(missiles[i], 20, 0)
         }
-    setTimeout(drawMissle, 0000)
+    }
+
+function makePower(){
+ var p = makeImage("images/Dust.png", 1000, random(10,500), 50, 50, 1) 
+ var o = makeImage("images/daily.png", 1100, random(20, 400), 50, 50, 1)
+ powerups.push(p, o)
+ setTimeout(makePower, 3000)
+}
+
+function drawPowerUp() {
+    for(var i = 0; i < powerups.length; i++) {
+        if(getX(powerups[i]) > -100){
+        move(powerups[i], -10, 0)
+        }
+        else {
+         setX(powerups[i], 850)
+         setY(powerups[i], random(0, 500))
+        }
+        }
     }
 
 function checkCollisionsPlayer() {
+    var beamx = getX(player) + 150 - 5
+    var beamy = getY(player) + 150/2
+    
    for(var i = 0; i < enemies.length; i++){
         if(collide(player, enemies[i], 0, 0) == true){
             removeArrayElement(enemies, i)
             gameOverDisplay()
             gameOver = true
         }
-   }
+     }
+       for(var j = 0; j < powerups.length; j++){
+           
+        if(collide(player, powerups[j], 0, 0) == true){
+            var beam2 = makeRect(beamx, beamy - 20, 80, 20, "red", 1)
+            var beam3 = makeRect(beamx, beamy + 20, 10, 90, "pink", 1)
+            removeArrayElement(powerups, j)
+            missiles.push(beam2, beam3)
+        }
+       }
   }
   
 
@@ -97,3 +143,4 @@ function checkCollisionsMissiles() {
 
 drawEverything()
 makeEnemies()
+makePower()
