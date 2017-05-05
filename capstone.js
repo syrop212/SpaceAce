@@ -59,7 +59,7 @@ function drawEnemies() {
             move(enemies[i], -3, 0)
             
           for(var j = 0; j < points.length; j++){    
-           if(oldscore <= points[j]) {
+           if(oldscore >= points[j]) {
                 move(enemies[i], -oldscore*2 , 0)
                  }
           }
