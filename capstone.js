@@ -2,6 +2,8 @@ var mouse = {x: 0, y: 0}
 
 var score = 0
 
+var speed = -3
+
 var scoreText = makeText("-", 690, 50, 25, "sans-serif", "white", 1)
 var scoreText2 = makeText("Score: ", 600, 50, 25, "sans-serif", "white", 1)
 
@@ -9,7 +11,7 @@ var player = makeImage("images/raiser.png",10, 50, 150, 150, 1)
 
 var enemies =[]
 
-var points = [10, 20, 30, 40]
+var scoreLevel = 0
 
 var powerups = []
 
@@ -18,6 +20,7 @@ var missiles = []
 var shot = []
 
 var gameOver = false
+
 
 var keyState = {};    
 window.addEventListener('keydown',function(e){
@@ -56,13 +59,8 @@ function drawEnemies() {
     
     for(var i = 0; i < enemies.length; i++){
         if(getX(enemies[i]) > -100) {
-            move(enemies[i], -3, 0)
+            move(enemies[i], speed, 0)
             
-          for(var j = 0; j < points.length; j++){    
-           if(oldscore >= points[j]) {
-                move(enemies[i], -oldscore*2 , 0)
-                 }
-          }
         }
         else {
          setX(enemies[i], 850)
@@ -143,6 +141,11 @@ function checkCollisionsMissiles() {
                 removeArrayElement(missiles, i)
                 removeArrayElement(enemies, j)
                 score++
+                if(score == scoreLevel + 10){
+                    scoreLevel = score
+                    speed = speed - 10
+                }
+                
                 scoreText.innerHTML = score
        }
      }

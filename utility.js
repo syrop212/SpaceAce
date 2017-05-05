@@ -233,3 +233,4 @@ function makeImage(url, x, y, width, height, opacity) {
 function gameOverDisplay() {
   makeText("GAME OVER", 400, 250, 50, "VT323", "white", 1)
 }
+
